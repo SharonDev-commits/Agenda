@@ -1,20 +1,33 @@
+"use client"
+import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
+import { Trash, Plus, List, Check, CircleX, SquarePen, ListCheck, Sigma } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
-import { Trash, Plus, List, Check, CircleX, SquarePen, ListCheck } from "lucide-react"
+type Filter = "all" | "pending" | "done"
 
 const Home = () => {
+  const [activeFilter, setActiveFilter] = useState<Filter>("all")
+  const [openDialog, setOpenDialog] = useState(false)
+
   return (
     <main className="w-full h-screen bg-gray-100 flex justify-center items-center">
       <Card className="w-[500px] p-4 space-y-4">
-
-        {/* Header */}
         <CardHeader className="flex flex-row gap-2 p-0">
           <Input placeholder="Adicionar tarefa" />
-
           <Button className="cursor-pointer bg-cyan-500 hover:bg-cyan-600 text-white transition-colors flex items-center gap-2">
             <Plus size={18} />
             Cadastrar
@@ -22,83 +35,137 @@ const Home = () => {
         </CardHeader>
 
         <CardContent className="space-y-2 p-0">
-          <Separator className="mb-5"/>
+          <Separator className="mb-5" />
 
-          {/* Filtros */}
           <div className="flex gap-2">
-            <Badge className="flex items-center gap-1 cursor-pointer bg-blue-500 hover:bg-violet-500 text-white transition-colors">
+            <Badge
+              onClick={() => setActiveFilter("all")}
+              className={`flex items-center gap-1 cursor-pointer text-white transition-colors ${
+                activeFilter === "all"
+                  ? "bg-violet-600 hover:bg-violet-700"
+                  : "bg-blue-500 hover:bg-blue-600"
+              }`}
+            >
               <List size={16} />
               Todas
             </Badge>
 
-            <Badge className="flex items-center gap-1 cursor-pointer bg-blue-500 hover:bg-violet-500 text-white transition-colors">
+            <Badge
+              onClick={() => setActiveFilter("pending")}
+              className={`flex items-center gap-1 cursor-pointer text-white transition-colors ${
+                activeFilter === "pending"
+                  ? "bg-violet-600 hover:bg-violet-700"
+                  : "bg-blue-500 hover:bg-blue-600"
+              }`}
+            >
               <CircleX size={16} />
               Não finalizadas
             </Badge>
 
-            <Badge className="flex items-center gap-1 cursor-pointer bg-blue-500 hover:bg-violet-600 text-white transition-colors">
+            <Badge
+              onClick={() => setActiveFilter("done")}
+              className={`flex items-center gap-1 cursor-pointer text-white transition-colors ${
+                activeFilter === "done"
+                  ? "bg-violet-600 hover:bg-violet-700"
+                  : "bg-blue-500 hover:bg-blue-600"
+              }`}
+            >
               <Check size={16} />
               Concluídas
             </Badge>
           </div>
 
-          <div className="flex items-center justify-between bg-white p-3 rounded-lg shadow-sm border overflow-hidden">
-            <div className="w-1 self-stretch bg-green-500 rounded-full -ml-3 mr-3"></div>
-            <p className="text-sm font-medium flex-1">
-              Estudar React
-            </p>
-            <div className="flex items-center gap-3">
-              <SquarePen 
-                size={18} 
-                className="cursor-pointer text-gray-500 hover:text-blue-500 transition-colors"
-              />
-              <Trash 
-                size={18} 
-                className="cursor-pointer text-gray-500 hover:text-red-500 transition-colors"
-              />
-            </div>
-          </div>
-          <div className="flex items-center justify-between bg-white p-3 rounded-lg shadow-sm border overflow-hidden">
-            <div className="w-1 self-stretch bg-green-500 rounded-full -ml-3 mr-3"></div>
-            <p className="text-sm font-medium flex-1">
-              Estudar React
-            </p>
-            <div className="flex items-center gap-3">
-              <SquarePen 
-                size={18} 
-                className="cursor-pointer text-gray-500 hover:text-blue-500 transition-colors"
-              />
-              <Trash 
-                size={18} 
-                className="cursor-pointer text-gray-500 hover:text-red-500 transition-colors"
-              />
-            </div>
-          </div>
-          <div className="flex items-center justify-between bg-white p-3 rounded-lg shadow-sm border overflow-hidden">
-            <div className="w-1 self-stretch bg-green-500 rounded-full -ml-3 mr-3"></div>
-            <p className="text-sm font-medium flex-1">
-              Estudar React
-            </p>
-            <div className="flex items-center gap-3">
-              <SquarePen 
-                size={18} 
-                className="cursor-pointer text-gray-500 hover:text-blue-500 transition-colors"
-              />
-              <Trash 
-                size={18} 
-                className="cursor-pointer text-gray-500 hover:text-red-500 transition-colors"
+          <Separator className="my-2" />
+
+          <div className="flex items-center justify-between px-1 py-2">
+            <span className="text-sm text-gray-800">Estudar React</span>
+            <div className="flex items-center gap-2">
+
+              {/* Modal de edição com DialogTrigger */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <SquarePen
+                    size={18}
+                    className="cursor-pointer text-gray-500 hover:text-blue-500 transition-colors"
+                  />
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Editar tarefa</DialogTitle>
+                    <DialogDescription>
+                      Altere o nome da tarefa abaixo e clique em salvar.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="flex items-center gap-2 py-2">
+                    <Input placeholder="Editar tarefa..." defaultValue="Estudar React" />
+                    <DialogClose asChild>
+                      <Button className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white whitespace-nowrap">
+                        <SquarePen size={16} />
+                        Salvar
+                      </Button>
+                    </DialogClose>
+                  </div>
+                </DialogContent>
+              </Dialog>
+
+              <Trash
+                size={18}
+                className="cursor-pointer text-red-400 hover:text-red-600 transition-colors"
               />
             </div>
           </div>
 
+          <Separator className="my-2" />
+
+          <div className="flex justify-between items-center">
+            <div className="flex gap-2 items-center">
+              <ListCheck size={18} />
+              <p className="text-xs">Tarefas concluídas</p>
+            </div>
+            <Button
+              onClick={() => setOpenDialog(true)}
+              className="bg-red-500 hover:bg-red-600 text-white flex items-center gap-2 transition-colors cursor-pointer"
+            >
+              <Trash size={16} />
+              Limpar tarefas concluidas
+            </Button>
+          </div>
+
+          <div className="h-2 w-full bg-gray-100 mt-4 rounded-md">
+            <div className="h-full w-[50%] bg-blue-500 rounded-md"></div>
+          </div>
+
+          <div className="flex justify-end items-center mt-2 gap-2">
+            <Sigma size={18} />
+            <p className="text-xs">3 tarefas no total</p>
+          </div>
         </CardContent>
-
-        <div>
-          <ListCheck size={18}/>
-          <p>Tarefas concluidas</p>
-        </div>
-
       </Card>
+
+      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Limpar tarefas concluídas</DialogTitle>
+            <DialogDescription>
+              Tem certeza que deseja remover todas as tarefas concluídas? Essa ação não pode ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex gap-2 mt-2">
+            <DialogClose asChild>
+              <Button variant="outline" className="cursor-pointer">
+                Cancelar
+              </Button>
+            </DialogClose>
+            <Button
+              className="bg-red-500 hover:bg-red-600 text-white cursor-pointer"
+              onClick={() => setOpenDialog(false)}
+            >
+              <Trash size={16} />
+              Confirmar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   )
 }
