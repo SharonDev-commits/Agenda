@@ -16,6 +16,7 @@ import {
   DialogClose,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import EditTask from "@/components/edit-task"
 
 type Filter = "all" | "pending" | "done"
 
@@ -80,33 +81,7 @@ const Home = () => {
           <div className="flex items-center justify-between px-1 py-2">
             <span className="text-sm text-gray-800">Estudar React</span>
             <div className="flex items-center gap-2">
-
-              {/* Modal de edição com DialogTrigger */}
-              <Dialog>
-                <DialogTrigger asChild>
-                  <SquarePen
-                    size={18}
-                    className="cursor-pointer text-gray-500 hover:text-blue-500 transition-colors"
-                  />
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Editar tarefa</DialogTitle>
-                    <DialogDescription>
-                      Altere o nome da tarefa abaixo e clique em salvar.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="flex items-center gap-2 py-2">
-                    <Input placeholder="Editar tarefa..." defaultValue="Estudar React" />
-                    <DialogClose asChild>
-                      <Button className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white whitespace-nowrap">
-                        <SquarePen size={16} />
-                        Salvar
-                      </Button>
-                    </DialogClose>
-                  </div>
-                </DialogContent>
-              </Dialog>
+              <EditTask />
 
               <Trash
                 size={18}
