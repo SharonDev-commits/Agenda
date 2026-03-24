@@ -17,12 +17,16 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import EditTask from "@/components/edit-task"
+import { getTasks } from "@/actions/get-tasks-from-bd"
+
 
 type Filter = "all" | "pending" | "done"
 
 const Home = () => {
   const [activeFilter, setActiveFilter] = useState<Filter>("all")
   const [openDialog, setOpenDialog] = useState(false)
+  const tasks = await getTasks() //await não roda em client server, usar o useEffect ou separar na camada de server, que é a melhor opção
+  console.log(tasks)
 
   return (
     <main className="w-full h-screen bg-gray-100 flex justify-center items-center">
