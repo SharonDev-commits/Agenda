@@ -43,7 +43,6 @@ const Home = () => {
         <CardContent className="space-y-2 p-0">
           <Separator className="mb-5" />
 
-          {/* DEBUG BUTTON */}
           <Button
             onClick={handleGetTasks}
             variant="outline"
@@ -152,7 +151,7 @@ const Home = () => {
 
           <div className="flex justify-end items-center mt-2 gap-2">
             <Sigma size={18} />
-            <p className="text-xs">3 tarefas no total</p>
+            <p className="text-xs">1 tarefa no total</p>
           </div>
         </CardContent>
       </Card>
