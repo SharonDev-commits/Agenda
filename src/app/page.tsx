@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
-import { Trash, Plus, List, Check, CircleX, SquarePen, ListCheck, Sigma } from "lucide-react"
+import { Trash, Plus, List, Check, CircleX, ListCheck, Sigma } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -19,21 +19,22 @@ import {
 import EditTask from "@/components/edit-task"
 import { getTasks } from "@/actions/get-tasks-from-bd"
 
-
 type Filter = "all" | "pending" | "done"
 
 const Home = () => {
   const [activeFilter, setActiveFilter] = useState<Filter>("all")
-  const [openDialog, setOpenDialog] = useState(false)
-  const tasks = await getTasks() //await não roda em client server, usar o useEffect ou separar na camada de server, que é a melhor opção
-  console.log(tasks)
+
+  const handleGetTasks = async () => {
+    const tasks = await getTasks()
+    console.log(tasks)
+  }
 
   return (
     <main className="w-full h-screen bg-gray-100 flex justify-center items-center">
       <Card className="w-[500px] p-4 space-y-4">
         <CardHeader className="flex flex-row gap-2 p-0">
           <Input placeholder="Adicionar tarefa" />
-          <Button className="cursor-pointer bg-cyan-500 hover:bg-cyan-600 text-white transition-colors flex items-center gap-2">
+          <Button className="cursor-pointer bg-cyan-500 hover:bg-cyan-600 text-white flex items-center gap-2">
             <Plus size={18} />
             Cadastrar
           </Button>
@@ -42,13 +43,22 @@ const Home = () => {
         <CardContent className="space-y-2 p-0">
           <Separator className="mb-5" />
 
-          <div className="flex gap-2">
+          {/* DEBUG BUTTON */}
+          <Button
+            onClick={handleGetTasks}
+            variant="outline"
+            className="w-full cursor-pointer"
+          >
+            Testar getTasks (console)
+          </Button>
+
+          <div className="flex gap-2 mt-2">
             <Badge
               onClick={() => setActiveFilter("all")}
-              className={`flex items-center gap-1 cursor-pointer text-white transition-colors ${
+              className={`flex items-center gap-1 cursor-pointer text-white ${
                 activeFilter === "all"
-                  ? "bg-violet-600 hover:bg-violet-700"
-                  : "bg-blue-500 hover:bg-blue-600"
+                  ? "bg-violet-600"
+                  : "bg-blue-500"
               }`}
             >
               <List size={16} />
@@ -57,10 +67,10 @@ const Home = () => {
 
             <Badge
               onClick={() => setActiveFilter("pending")}
-              className={`flex items-center gap-1 cursor-pointer text-white transition-colors ${
+              className={`flex items-center gap-1 cursor-pointer text-white ${
                 activeFilter === "pending"
-                  ? "bg-violet-600 hover:bg-violet-700"
-                  : "bg-blue-500 hover:bg-blue-600"
+                  ? "bg-violet-600"
+                  : "bg-blue-500"
               }`}
             >
               <CircleX size={16} />
@@ -69,10 +79,10 @@ const Home = () => {
 
             <Badge
               onClick={() => setActiveFilter("done")}
-              className={`flex items-center gap-1 cursor-pointer text-white transition-colors ${
+              className={`flex items-center gap-1 cursor-pointer text-white ${
                 activeFilter === "done"
-                  ? "bg-violet-600 hover:bg-violet-700"
-                  : "bg-blue-500 hover:bg-blue-600"
+                  ? "bg-violet-600"
+                  : "bg-blue-500"
               }`}
             >
               <Check size={16} />
@@ -86,10 +96,9 @@ const Home = () => {
             <span className="text-sm text-gray-800">Estudar React</span>
             <div className="flex items-center gap-2">
               <EditTask />
-
               <Trash
                 size={18}
-                className="cursor-pointer text-red-400 hover:text-red-600 transition-colors"
+                className="cursor-pointer text-red-400 hover:text-red-600"
               />
             </div>
           </div>
@@ -101,13 +110,40 @@ const Home = () => {
               <ListCheck size={18} />
               <p className="text-xs">Tarefas concluídas</p>
             </div>
-            <Button
-              onClick={() => setOpenDialog(true)}
-              className="bg-red-500 hover:bg-red-600 text-white flex items-center gap-2 transition-colors cursor-pointer"
-            >
-              <Trash size={16} />
-              Limpar tarefas concluidas
-            </Button>
+
+            {/* DIALOG COM TRIGGER */}
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="bg-red-500 hover:bg-red-600 text-white flex items-center gap-2 cursor-pointer">
+                  <Trash size={16} />
+                  Limpar tarefas concluídas
+                </Button>
+              </DialogTrigger>
+
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Limpar tarefas concluídas</DialogTitle>
+                  <DialogDescription>
+                    Tem certeza que deseja remover todas as tarefas concluídas? Essa ação não pode ser desfeita.
+                  </DialogDescription>
+                </DialogHeader>
+
+                <DialogFooter className="flex gap-2 mt-2">
+                  <DialogClose asChild>
+                    <Button variant="outline" className="cursor-pointer">
+                      Cancelar
+                    </Button>
+                  </DialogClose>
+
+                  <DialogClose asChild>
+                    <Button className="bg-red-500 hover:bg-red-600 text-white cursor-pointer">
+                      <Trash size={16} />
+                      Confirmar
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
 
           <div className="h-2 w-full bg-gray-100 mt-4 rounded-md">
@@ -120,31 +156,6 @@ const Home = () => {
           </div>
         </CardContent>
       </Card>
-
-      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Limpar tarefas concluídas</DialogTitle>
-            <DialogDescription>
-              Tem certeza que deseja remover todas as tarefas concluídas? Essa ação não pode ser desfeita.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex gap-2 mt-2">
-            <DialogClose asChild>
-              <Button variant="outline" className="cursor-pointer">
-                Cancelar
-              </Button>
-            </DialogClose>
-            <Button
-              className="bg-red-500 hover:bg-red-600 text-white cursor-pointer"
-              onClick={() => setOpenDialog(false)}
-            >
-              <Trash size={16} />
-              Confirmar
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </main>
   )
 }

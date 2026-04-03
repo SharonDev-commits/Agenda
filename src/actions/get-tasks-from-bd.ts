@@ -1,3 +1,4 @@
+"use server"
 import { length } from './../../node_modules/effect/src/MutableList';
 import { prisma } from "@/lib/prisma";
 
